@@ -1,6 +1,6 @@
 #include "event.hpp"
 
-void _whenEventQ(EventQueue *event, void *cpp_obj, void *cpp_method)
+void whenEventQ(EventQueue *event, void *cpp_obj, void *cpp_method)
 {
     event->push(cpp_obj, cpp_method, 1);
 }

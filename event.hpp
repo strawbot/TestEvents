@@ -134,9 +134,9 @@ private:
     queue_type eventqueue[3];
 };
 
-#define whenEventQCpp(e, c, o, m) _whenEventQ(e, (void *) &o, (void *) &c::m)
+//#define whenEventQCpp(e, c, o, m) _whenEventQ(e, (void *) &o, (void *) &c::m)
 
-void _whenEventQ(EventQueue *event, void *cpp_obj, void *cpp_method);
+void whenEventQ(EventQueue *event, void *cpp_obj, void *cpp_method);
 void onceEventQ(EventQueue *event, void *cpp_obj, void *cpp_method);
 void stopEventQ(EventQueue *event, void *cpp_obj, void *cpp_method);
 
@@ -144,15 +144,24 @@ void stopEventQ(EventQueue *event, void *cpp_obj, void *cpp_method);
 
 #endif
 
+#define QEvent(e)   struct queue_type e##qt[3]; struct EventQueue_t e[1] = {{3, 0, 0, e##qt}}
+
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-    void whenEventQ(struct  EventQueue_t *event, void (*c_handler)());
+    void whenEventQ(struct EventQueue_t *event, void (*c_handler)());
     void onceEventQ(struct EventQueue_t *event, void (*c_handler)());
     void stopEventQ(struct EventQueue_t *event, void (*c_handler)());
     void never(struct EventQueue_t *event);
     void happen(struct EventQueue_t *event);
+
+#define when(e, h)  whenEventQ(e, (void *)&h)
+#define once(e, h)  onceEventQ(e, (void *)&h)
+#define whenCpp(e, h)  whenEventQ((EventQueue *)e, (void *)this, (void *)&h)
+#define onceCpp(e, h)  onceEventQ((EventQueue *)e, (void *)this, (void *)&h)
+#define QEvent(e)   struct queue_type e##qt[3]; struct EventQueue_t e[1] = {{3, 0, 0, e##qt}}
+
 #ifdef __cplusplus
 }
 #endif
