@@ -9,6 +9,6 @@ SOURCES += main.cpp \
     testcpp.cpp
 
 HEADERS += \
-    eventcpp.h \
-    eventc.h \
-    testcpp.h
+    testcpp.h \
+    event.hpp \
+    event.h

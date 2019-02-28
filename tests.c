@@ -1,47 +1,50 @@
 // test C events
 
 #include <stdio.h>
-#include "eventc.h"
+#include "event.h"
 
 QEvent(cbutton);
 extern struct EventQueue_t * cppButton();
+extern int events, fails;
 
-void press() { happen(cbutton); }
-void action1() { printf("\nButton press 1"); }
-void action2() { static int i = 2; printf("\nButton press %i",i++); }
+void press(int n) { happen(cbutton);  if (events != n)  fails++, printf(" <<C FAIL>> "); }
+void action1() { printf("\nC button press 1"); events++; }
+void action2() { printf("\nC button press %i",events++); }
 
 void test1C() {
+    events = 0;
     printf("\nTest1 no handler button press");
-    press();
+    press(0);
     once(cbutton, action1);
     printf("\nTest2 with action1");
-    press();
+    press(1);
     printf("\nTest3 no handler button press");
-    press();
+    press(1);
     printf("\nTest4 multiple (3) button presses");
     when(cbutton, action2);
-    press();
-    press();
-    press();
+    press(2);
+    press(3);
+    press(4);
     never(cbutton);
     printf("\nTest5 never handler button press");
-    press();
+    press(4);
 }
 
 void test2() {
+    events = 0;
     printf("\nTest1 no handler button press");
-    press();
+    press(0);
     onceEventQ(cppButton(), action1);
     printf("\nTest2 with action1");
-    press();
+    press(1);
     printf("\nTest3 no handler button press");
-    press();
+    press(1);
     printf("\nTest4 multiple (3) button presses");
     whenEventQ(cppButton(), action2);
-    press();
-    press();
-    press();
-    clearEventQ(cppButton());
+    press(2);
+    press(3);
+    press(4);
+    never(cppButton());
     printf("\nTest5 never handler button press");
-    press();
+    press(4);
 }

@@ -151,8 +151,8 @@ extern "C"
     void whenEventQ(struct  EventQueue_t *event, void (*c_handler)());
     void onceEventQ(struct EventQueue_t *event, void (*c_handler)());
     void stopEventQ(struct EventQueue_t *event, void (*c_handler)());
-    void clearEventQ(struct EventQueue_t *event);
-    void happenEventQ(struct EventQueue_t *event);
+    void never(struct EventQueue_t *event);
+    void happen(struct EventQueue_t *event);
 #ifdef __cplusplus
 }
 #endif

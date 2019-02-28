@@ -1,4 +1,4 @@
-#include "eventcpp.h"
+#include "event.hpp"
 
 void _whenEventQ(EventQueue *event, void *cpp_obj, void *cpp_method)
 {
@@ -32,12 +32,12 @@ extern "C"
         static_cast<EventQueue *>(event)->stop((void *) c_handler);
     }
 
-    void clearEventQ(struct  EventQueue_t *event)
+    void never(struct  EventQueue_t *event)
     {
         static_cast<EventQueue *>(event)->clear();
     }
 
-    void happenEventQ(struct  EventQueue_t *event)
+    void happen(struct  EventQueue_t *event)
     {
         static_cast<EventQueue *>(event)->happen();
     }
