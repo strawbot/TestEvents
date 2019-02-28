@@ -41,7 +41,7 @@ void test2() {
     printf("\nTest3 no handler button press");
     cppPress(1);
     printf("\nTest4 multiple (3) button presses");
-    whenEventQ(cppButton(), action2);
+    when(cppButton(), action2);
     cppPress(2);
     cppPress(3);
     cppPress(4);
