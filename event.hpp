@@ -117,13 +117,9 @@ public:
 
 void stopEventQ(EventQueue *event, void *cpp_obj, void *cpp_method);
 
-#endif
-
 #define QEvent(e)   struct queue_type e##qt[3]; struct EventQueue_t e[1] = {{3, 0, 0, e##qt}}
 
-#ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
 //      void whenEventQ(struct EventQueue_t *event, void (*c_handler)());
     void whenEventQ(struct EventQueue_t *event, void *cpp_obj, void *cpp_method);
