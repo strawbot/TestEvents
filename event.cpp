@@ -1,4 +1,4 @@
-#include "event.hpp"
+#include "event.h"
 
 extern "C" {
 
@@ -11,7 +11,7 @@ void onceEventQ(struct EventQueue_t* event, void* cpp_obj, void* cpp_method) {
 }
 
 void stopEventQ(struct EventQueue_t* event, void* cpp_obj, void* cpp_method) {
-  static_cast<EventQueue*>(event)->stop(cpp_obj, cpp_method);
+  static_cast<EventQueue*>(event)->remove(cpp_obj, cpp_method);
 }
 
 void never(struct EventQueue_t* event) {

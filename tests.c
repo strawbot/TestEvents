@@ -7,7 +7,7 @@
 extern int events, fails;
 
 // define an event in C
-QEvent(button);
+Event(button);
 
 // import C++ equivelants
 extern struct EventQueue_t* cppButton();
@@ -16,17 +16,20 @@ void cppPress(int i);
 // define C API
 void cpress(int n) {
   happen(button);
-  if (events != n)
+  if (events++ != n)
     fails++, printf(" <<C FAIL>> ");
 }
+
 void action1() {
   printf("\nC button press 1");
   events++;
 }
+
 void action2() {
   printf("\nC button press %i", events++);
 }
 
+// Tests
 void test1C() {
   printf("\n\nBegin C only tests:");
 
@@ -44,6 +47,17 @@ void test1C() {
   cpress(events + 1);
   never(button);
   printf("\nTest5 never handler button press");
+  cpress(events);
+  once(button, action1);
+  stop(button, action1);
+  printf("\nTest6 stop action before button press");
+  cpress(events);
+
+  once(button, action1);
+  when(button, action2);
+  stop(button, action1);
+  stop(button, action2);
+  printf("\nTest6 stop action before button press");
   cpress(events);
 }
 
