@@ -91,9 +91,9 @@ extern "C" {
   struct queue_type e##qt[size+1]; \
   struct EventQueue_t e[1] = {{size+1, 0, 0, e##qt}}
 
-void onceEventQ(struct EventQueue_t* event, void* cpp_obj, void* cpp_method);
-void whenEventQ(struct EventQueue_t* event, void* cpp_obj, void* cpp_method);
-void stopEventQ(struct EventQueue_t* event, void* cpp_obj, void* cpp_method);
+void onceEvent(struct EventQueue_t* event, void* cpp_obj, void* cpp_method);
+void whenEvent(struct EventQueue_t* event, void* cpp_obj, void* cpp_method);
+void stopEvent(struct EventQueue_t* event, void* cpp_obj, void* cpp_method);
 
 void never(struct EventQueue_t* event);
 void happen(struct EventQueue_t* event);
@@ -102,16 +102,16 @@ void happen(struct EventQueue_t* event);
 // C++ in C
 }
 // C++
-#define once(e, h) onceEventQ(e, (void*) this, (void*)&h)
-#define when(e, h) whenEventQ(e, (void*) this, (void*)&h)
-#define stop(e, h) stopEventQ(e, (void*) this, (void*)&h)
+#define once(e, h) onceEvent(e, (void*) this, (void*)&h)
+#define when(e, h) whenEvent(e, (void*) this, (void*)&h)
+#define stop(e, h) stopEvent(e, (void*) this, (void*)&h)
 
 #else
 
 // C
-#define once(e, h) onceEventQ(e, NULL, (void*)&h)
-#define when(e, h) whenEventQ(e, NULL, (void*)&h)
-#define stop(e, h) stopEventQ(e, NULL, (void*)&h)
+#define once(e, h) onceEvent(e, NULL, (void*)&h)
+#define when(e, h) whenEvent(e, NULL, (void*)&h)
+#define stop(e, h) stopEvent(e, NULL, (void*)&h)
 
 #endif
 

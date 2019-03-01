@@ -2,15 +2,15 @@
 
 extern "C" {
 
-void whenEventQ(struct EventQueue_t* event, void* cpp_obj, void* cpp_method) {
+void whenEvent(struct EventQueue_t* event, void* cpp_obj, void* cpp_method) {
   static_cast<EventQueue*>(event)->push(cpp_obj, cpp_method, 1);
 }
 
-void onceEventQ(struct EventQueue_t* event, void* cpp_obj, void* cpp_method) {
+void onceEvent(struct EventQueue_t* event, void* cpp_obj, void* cpp_method) {
   static_cast<EventQueue*>(event)->push(cpp_obj, cpp_method, 0);
 }
 
-void stopEventQ(struct EventQueue_t* event, void* cpp_obj, void* cpp_method) {
+void stopEvent(struct EventQueue_t* event, void* cpp_obj, void* cpp_method) {
   static_cast<EventQueue*>(event)->remove(cpp_obj, cpp_method);
 }
 
