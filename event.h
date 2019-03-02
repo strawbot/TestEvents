@@ -8,9 +8,10 @@
 #ifndef EVENTS_H
 #define EVENTS_H
 
-#include <string.h>
 #include <stdio.h>
+#include <string.h>
 
+// structures common to C and C++
 struct queue_type {
   void* object, *method;
   char persist;
@@ -25,25 +26,18 @@ struct EventQueue_t {
 
 class EventQueue : public EventQueue_t {
  public:
-  void push(void* cpp_obj, void* cpp_method, char persist) {
-    _queue[_head++] = {cpp_obj, cpp_method, persist};
+  int count() { return (_head - _tail) % _size; }
+
+  void clear() { _head = _tail = 0; }
+
+  void push(queue_type* entry) {
+    memcpy(&_queue[_head++], entry, sizeof(queue_type));
     _head %= _size;
   }
 
-  int remove(void* cpp_obj, void* cpp_method) {
-    int total = count();
-
-    for (int i = 0; i < total; i++) {
-      queue_type e;
-
-      if (pop(&e) < 0)
-        return -1;
-
-      if (e.object != cpp_obj && e.method != cpp_method) {
-        push(e.object, e.method, e.persist);
-      }
-    }
-    return 0;
+  void pop(queue_type* entry) {
+    memcpy(entry, &_queue[_tail++], sizeof(queue_type));
+    _tail %= _size;
   }
 
   void happen() {
@@ -52,34 +46,33 @@ class EventQueue : public EventQueue_t {
     for (int i = 0; i < total; i++) {
       queue_type e;
 
-      if (pop(&e) == 0) {
-        if (e.persist)
-          push(e.object, e.method, e.persist);
+      pop(&e);
+      if (e.persist)
+        push(&e);
 
-        if (e.object == nullptr) {
-          void (*callback)() = (void (*)())e.method;
-          callback();
-        } else {
-          void (*method)(void*) = (void (*)(void*))e.method;
-          method(e.object);
-        }
+      if (e.object == nullptr) {
+        void (*callback)() = (void (*)())e.method;
+        callback();
+      } else {
+        void (*method)(void*) = (void (*)(void*))e.method;
+        method(e.object);
       }
     }
   }
 
-  int pop(queue_type* entry) {
-    if (_head == _tail)
-      return -1;
+  void remove(void* cpp_obj, void* cpp_method) {
+    int total = count();
 
-    memcpy(entry, &_queue[_tail], sizeof(queue_type));
-    _tail = (_tail + 1) % _size;
+    for (int i = 0; i < total; i++) {
+      queue_type e;
 
-    return 0;
+      pop(&e);
+
+      if (e.object != cpp_obj && e.method != cpp_method) {
+        push(&e);
+      }
+    }
   }
-
-  int count() { return (_head - _tail) % _size; }
-
-  void clear() { _head = _tail = 0; }
 };
 
 extern "C" {
@@ -87,9 +80,9 @@ extern "C" {
 
 #define Event(e) Eventi(3, e)
 
-#define Eventi(size, e) \
-  struct queue_type e##qt[size+1]; \
-  struct EventQueue_t e[1] = {{size+1, 0, 0, e##qt}}
+#define Eventi(size, e)              \
+  struct queue_type e##qt[size + 1]; \
+  struct EventQueue_t e[1] = {{size + 1, 0, 0, e##qt}}
 
 void onceEvent(struct EventQueue_t* event, void* cpp_obj, void* cpp_method);
 void whenEvent(struct EventQueue_t* event, void* cpp_obj, void* cpp_method);
@@ -114,5 +107,7 @@ void happen(struct EventQueue_t* event);
 #define stop(e, h) stopEvent(e, NULL, (void*)&h)
 
 #endif
+
+#define extEvent(event) extern struct EventQueue_t event[]
 
 #endif /* EVENTS_H */
