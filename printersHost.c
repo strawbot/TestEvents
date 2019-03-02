@@ -92,9 +92,13 @@ void printHex2(unsigned int hex)
     outp += printf(" %02X",hex);
 }
 
-void printFloat(double f, int n)
+void printFloat(float f, int n)
 {
     outp += printf("%.*f ", n, f);
+}
+
+void printDouble(double d, int n){
+    outp += printf("%.*f ", n, d);
 }
 
 void flush(void)
