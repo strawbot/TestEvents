@@ -6,18 +6,14 @@ CONFIG -= qt
 SOURCES += main.cpp \
     tests.c \
     testcpp.cpp \
-printersHost.c \
-    ../SLDV2/TimbreOS/event.cpp
-
-#    action.cpp \
-#    queue.c \
-#    timeout.c
+    ../SLDV2/TimbreOS/event.cpp \
+    ../SLDV2/TimbreOS/printersHost.c \
+    ../SLDV2/TimbreOS/timeout.c \
+    ../SLDV2/TimbreOS/queue.c \
+    mocks.c \
+    ../SLDV2/TimbreOS/timeEvent.c
 
 HEADERS += \
     testcpp.h \
-    action.hpp \
-    printers.h \
-    queue.h \
-    timeout.h \
-timestamp.h \
-    ../SLDV2/TimbreOS/event.h
+
+INCLUDEPATH += ../SLDV2/TimbreOS

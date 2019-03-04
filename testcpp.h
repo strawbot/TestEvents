@@ -26,21 +26,22 @@ public:
 
     static void action1(testcpp* self) {
         (void)self;
-        printf("\nC++ button press 1");
+        printf("\nC++ action 1");
         events++;
     }
 
     static void action2(testcpp* self) {
-        printf("\nC++ button press local:%i global %i", self->i++, events++), events++;
+        printf("\nC++ action 2 local:%i global %i", self->i++, events++), events++;
     }
 
     // Tests
     void test1Cpp() {
-        printf("\n\nBegin C++ only tests:");
+        printf("\n\nBegin C++ only event tests:");
 
         printf("\nTest1 no handler button press");
         press(events);
         once(button, action1);
+//        once(button, (void*)this, (void*)&action1);
         printf("\nTest2 with action1");
         press(events + 1);
         printf("\nTest3 no handler button press");
@@ -63,7 +64,7 @@ public:
         stop(button, action2);
     }
     void test2Cpp() {
-        printf("\n\nBegin C local event C++ action tests:");
+        printf("\n\nBegin C local event C++ event tests:");
 
         printf("\nTest1 no handler button press");
         cpress(events);

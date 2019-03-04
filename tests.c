@@ -2,6 +2,11 @@
 
 #include <stdio.h>
 #include "event.h"
+#include "ttypes.h"
+#include "timeEvent.h"
+
+void addTime(Long n);
+void timeaction_IRQ();
 
 // from the accounting department
 extern int events, fails;
@@ -10,28 +15,34 @@ extern int events, fails;
 Event(button);
 
 // import C++ equivelants
-extern struct EventQueue_t* cppButton();
+extern EventQueue* cppButton();
 void cppPress(int i);
 
 // define C API
+
+void eventTest(int n) {
+    if (events++ != n)
+      fails++, printf(" <<C FAIL>> event:%i n:%i",events-1,n);
+}
+
 void cpress(int n) {
   happen(button);
-  if (events++ != n)
-    fails++, printf(" <<C FAIL>> ");
+  eventTest(n);
 }
 
 void action1() {
-  printf("\nC button press 1");
+  printf("\nC action 1");
   events++;
 }
 
 void action2() {
-  printf("\nC button press %i", events++);
+  printf("\nC action 2 %i", events++);
+  events++;
 }
 
 // Tests
 void test1C() {
-  printf("\n\nBegin C only tests:");
+  printf("\n\nBegin C only event tests:");
 
   printf("\nTest1 no handler button press");
   cpress(events);
@@ -42,9 +53,9 @@ void test1C() {
   cpress(events);
   printf("\nTest4 multiple (3) button presses");
   when(button, action2);
-  cpress(events + 1);
-  cpress(events + 1);
-  cpress(events + 1);
+  cpress(events + 2);
+  cpress(events + 2);
+  cpress(events + 2);
   never(button);
   printf("\nTest5 never handler button press");
   cpress(events);
@@ -62,7 +73,7 @@ void test1C() {
 }
 
 void test2C() {
-  printf("\n\nBegin C++ local event, C local action tests:");
+  printf("\n\nBegin C++ local event, C local event tests:");
 
   printf("\nTest1 no handler button press");
   cppPress(events);
@@ -73,10 +84,40 @@ void test2C() {
   cppPress(events);
   printf("\nTest4 multiple (3) button presses");
   when(cppButton(), action2);
-  cppPress(events + 1);
-  cppPress(events + 1);
-  cppPress(events + 1);
+  cppPress(events + 2);
+  cppPress(events + 2);
+  cppPress(events + 2);
   never(cppButton());
   printf("\nTest5 never handler button press");
   cppPress(events);
+}
+
+void predict(int offset, int msecs) {
+    int i = events + offset;
+    addTime(ta_msecs(msecs));
+    timeaction_IRQ();
+    eventTest(i);
+}
+
+void test3C() {
+    printf("\n\nBegin C time event tests:");
+
+    after(21, action1);
+    predict(0, 0);
+    predict(0, 20);
+    predict(1, 1);
+    predict(0, 1);
+    after(22, action2);
+    predict(0, 0);
+    predict(0, 21);
+    predict(2, 1);
+    predict(0, 1);
+    every(20, action1);
+    predict(0, 0);
+    predict(0, 19);
+    predict(1, 1);
+    predict(0, 1);
+    predict(0, 18);
+    predict(1, 1);
+    predict(0, 1);
 }
