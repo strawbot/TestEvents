@@ -6,12 +6,16 @@
 #include "timeEvent.h"
 
 void addTime(Long n);
-void timeaction_IRQ();
+void timeevent_IRQ();
 
 // from the accounting department
 extern int events, fails;
 
+static const char *file = __FILE__;
+static int lineno = __LINE__;
+
 // define an event in C
+extEvent(button);
 Event(button);
 
 // import C++ equivelants
@@ -21,8 +25,10 @@ void cppPress(int i);
 // define C API
 
 void eventTest(int n) {
-    if (events++ != n)
-      fails++, printf(" <<C FAIL>> event:%i n:%i",events-1,n);
+    if (events++ != n) {
+      fails++;
+      printf(" <<C FAIL>> event:%i n:%i  %s line# %i\n",events-1,n,file,lineno);
+    }
 }
 
 void cpress(int n) {
@@ -92,16 +98,17 @@ void test2C() {
   cppPress(events);
 }
 
-void predict(int offset, int msecs) {
+void predictFunction(int offset, int msecs) {
     int i = events + offset;
     addTime(ta_msecs(msecs));
-    timeaction_IRQ();
+    timeevent_IRQ();
     eventTest(i);
 }
 
+#define predict(o, m) lineno=__LINE__,predictFunction(o, m)
+
 void test3C() {
     printf("\n\nBegin C time event tests:");
-
     after(21, action1);
     predict(0, 0);
     predict(0, 20);

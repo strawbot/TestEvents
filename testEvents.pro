@@ -11,7 +11,7 @@ SOURCES += main.cpp \
     ../SLDV2/TimbreOS/timeout.c \
     ../SLDV2/TimbreOS/queue.c \
     mocks.c \
-    ../SLDV2/TimbreOS/timeEvent.c
+    ../SLDV2/TimbreOS/timeEvent.cpp
 
 HEADERS += \
     testcpp.h \

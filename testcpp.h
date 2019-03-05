@@ -92,24 +92,26 @@ void cfpress(int n) {
     fails++, printf(" <<CF FAIL>> ");
 }
 
-void action2(testcpp* self) {
+void action4(testcpp* self) {
     printf("\nC++ button press %i", self->i++);
     events += 2;
 }
 
-void action1(testcpp* self) {
+void action3(testcpp* self) {
     (void)self;
     printf("\nC++ button press 1");
     events++;
-    whenEvent(cfbutton, NULL, (void*)&action2);
+    whenEvent(cfbutton, (void*)&action4, (void*)jump);
 }
 
 extern "C" void testCppFunction() { // syntax is ugly but it works
-    printf("\nTest C++ function events.");
-    onceEvent(cfbutton, NULL, (void*)&action1);
+    printf("\n\nTest C++ function events.");
+
+    onceEvent(cfbutton, (void*)&action3, (void*)jump);
     cfpress(events+1);
     cfpress(events+2);
-    stopEvent(cfbutton, NULL, (void*)&action2);
+    cfpress(events+2);
+    stopEvent(cfbutton, (void*)&action4, (void*)jump);
     cfpress(events);
 }
 

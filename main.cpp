@@ -3,7 +3,10 @@
 using namespace std;
 
 extern "C" {
+// inits
+void init_ta();
 
+// tests
 void test1C();
 void test2C();
 void test3C();
@@ -13,12 +16,17 @@ void* oa();
 void change();
 void testCppFunction();
 
+// accounting
+extern int events, fails;
 int events, fails;
 }
 
 int main() {
   fails = 0;
   events = 0;
+
+  // setup
+  init_ta();
 
   // event
   test1C();
