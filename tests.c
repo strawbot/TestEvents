@@ -66,14 +66,14 @@ void test1C() {
     printf("\nTest5 never handler button press");
     cpress(events);
     once(button, action1);
-    stop(button, action1);
+    stopEvent(button, action1);
     printf("\nTest6 stop action before button press");
     cpress(events);
 
     once(button, action1);
     when(button, action2);
-    stop(button, action1);
-    stop(button, action2);
+    stopEvent(button, action1);
+    stopEvent(button, action2);
     printf("\nTest6 stop action before button press");
     cpress(events);
 }
