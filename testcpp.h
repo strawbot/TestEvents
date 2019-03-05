@@ -2,14 +2,21 @@
 #define TESTCPP_H
 
 #include "event.h"
+#include "test.h"
+#include "timeEvent.h"
 #include <stdio.h>
 
 // from the accounting department
-extern int events, fails;
+extern const char* file;
+extern int lineno;
 
 // import C equivelants
-extern "C" void cpress(int);
-extern "C" EventQueue button[];
+extern "C" {
+void cpress(int);
+extEvent(button);
+void timeevent_IRQ();
+void addTime(Long n);
+}
 #define cbutton ::button
 
 class testcpp {
@@ -20,18 +27,18 @@ public:
     // API
     void press(int n) {
         happen(button);
-        if (events++ != n)
-            fails++, printf(" <<C++ FAIL>> ");
+        eventTest(n);
     }
 
-    static void action1(testcpp* self) {
+    static void action1(void* self) {
         (void)self;
-        printf("\nC++ action 1");
-        events++;
+        printf("\nC action 1 %i", ++events);
     }
 
-    static void action2(testcpp* self) {
-        printf("\nC++ action 2 local:%i global %i", self->i++, events++), events++;
+    static void action2(void* obj) {
+        testcpp* self = (testcpp*)obj;
+        printf("\nC++ action 2 local:%i global %i", ++self->i, ++events);
+        events++;
     }
 
     // Tests
@@ -41,7 +48,7 @@ public:
         printf("\nTest1 no handler button press");
         press(events);
         once(button, action1);
-//        once(button, (void*)this, (void*)&action1);
+        //        once(button, (void*)this, (void*)&action1);
         printf("\nTest2 with action1");
         press(events + 1);
         printf("\nTest3 no handler button press");
@@ -82,25 +89,65 @@ public:
         printf("\nTest5 never handler button press");
         cpress(events);
     }
+
+#define predict(o, m) lineno = __LINE__, predictFunction(o, m)
+
+    void test3Cpp() {
+        printf("\n\nBegin C++ time event tests:");
+
+        init_te();
+        after(21, this, action1);
+        predict(0, 0);
+        predict(0, 20);
+        predict(1, 1);
+        predict(0, 1);
+        after(22, this, action2);
+        predict(0, 0);
+        predict(0, 21);
+        predict(2, 1);
+        predict(0, 1);
+        every(20, this, action1);
+        predict(0, 0);
+        predict(0, 19);
+        predict(1, 1); // test time
+        predict(0, 1);
+        predict(0, 18);
+        predict(1, 1); // test repeat
+        predict(0, 1);
+        predict(1, 40); // test missed one
+        predict(1, 0); // should get both
+        predict(0, 0);
+        stopTimeEvent(this, action1);
+        predict(0, 20);
+        TimeEvent* te = every(20, this, action1);
+        stopTe(te);
+        predict(0, 20);
+    }
 };
 
 Event(cfbutton);
 
 void cfpress(int n) {
-  happen(cfbutton);
-  if (events++ != n)
-    fails++, printf(" <<CF FAIL>> ");
+    happen(cfbutton);
+    eventTest(n);
 }
 
-void action4(testcpp* self) {
-    printf("\nC++ button press %i", self->i++);
+static void action1() {
+    printf("\nC action 1 %i", ++events);
+}
+
+static void action2() {
+    printf("\nC++ action 2 %i", ++events);
+    events++;
+}
+
+void action4() {
+    printf("\nC++ button press 4 %i", events);
     events += 2;
 }
 
-void action3(testcpp* self) {
-    (void)self;
-    printf("\nC++ button press 1");
-    events++;
+void action3() {
+    printf("\nC action 3 %i", ++events);
     whenEvent(cfbutton, (void*)&action4, (void*)jump);
 }
 
@@ -108,11 +155,42 @@ extern "C" void testCppFunction() { // syntax is ugly but it works
     printf("\n\nTest C++ function events.");
 
     onceEvent(cfbutton, (void*)&action3, (void*)jump);
-    cfpress(events+1);
-    cfpress(events+2);
-    cfpress(events+2);
+    cfpress(events + 1);
+    cfpress(events + 2);
+    cfpress(events + 2);
     stopEvent(cfbutton, (void*)&action4, (void*)jump);
     cfpress(events);
+
+    // time events
+    init_te();
+    after(21, action1);
+    predict(0, 0);
+    predict(0, 20);
+    predict(1, 1);
+    predict(0, 1);
+    after(22, action2);
+    predict(0, 0);
+    predict(0, 21);
+    predict(2, 1);
+    predict(0, 1);
+    every(20, action1);
+    predict(0, 0);
+    predict(0, 19);
+    predict(1, 1); // test time
+    predict(0, 1);
+    predict(0, 18);
+    predict(1, 1); // test repeat
+    predict(0, 1);
+    predict(1, 40); // test missed one
+    predict(1, 0); // should get both
+    predict(0, 0);
+    stopTimeEvent(action1);
+    predict(0, 20);
+    TimeEvent* te = every(20, action1);
+    stopTe(te);
+    predict(0, 20);
 }
+
+extern "C" void testCppFunction();
 
 #endif // TESTCPP_H

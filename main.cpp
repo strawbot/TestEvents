@@ -3,8 +3,9 @@
 using namespace std;
 
 extern "C" {
+#include "test.h"
 // inits
-void init_ta();
+void init_te();
 
 // tests
 void test1C();
@@ -12,47 +13,50 @@ void test2C();
 void test3C();
 void test1Cpp();
 void test2Cpp();
+void test3Cpp();
 void* oa();
 void change();
 void testCppFunction();
 
 // accounting
-extern int events, fails;
 int events, fails;
 }
 
 int main() {
-  fails = 0;
-  events = 0;
+    fails = 0;
+    events = 0;
 
-  // setup
-  init_ta();
+    // setup
+    init_te();
 
-  // event
-  test1C();
-  test1Cpp();
-  test2C();
-  test2Cpp();
-  testCppFunction();
+    // time events
+    test3C();
 
-  change();
-  test2Cpp();
-  test1Cpp();
-  test1C();
-  test2C();
+    // events
+    test1C();
+    test1Cpp();
+    test2C();
+    test2Cpp();
+    testCppFunction();
+    test3Cpp();
 
-  // time events
-  test3C();
+    change();
+    test2Cpp();
+    test1Cpp();
+    test1C();
+    test2C();
+    test3Cpp();
 
-//  cout << "\n\nBegin C++ local event C++ function action tests:";
-//  cout << "\n\nBegin C++ local event C++ remote action tests:";
-//  cout << "\n\nBegin C++ remote event C++ local action tests:";
-  cout << "\nEnd Tests:";
-  if (fails)
-    cout << " Fails -------> " << fails << " for " << events << endl;
-  else
-    cout << " All Passed ++++++++> " << events << endl;
-  return 0;
+
+    //  cout << "\n\nBegin C++ local event C++ function action tests:";
+    //  cout << "\n\nBegin C++ local event C++ remote action tests:";
+    //  cout << "\n\nBegin C++ remote event C++ local action tests:";
+    cout << "\nEnd Tests:";
+    if (fails)
+        cout << RED" Fails -------> " << NORMAL << fails << " for " << events << endl;
+    else
+        cout << GREEN" All Passed ++++++++> " << NORMAL << events << endl;
+    return 0;
 }
 
 /* Notes:

@@ -15,5 +15,6 @@ SOURCES += main.cpp \
 
 HEADERS += \
     testcpp.h \
+    test.h
 
 INCLUDEPATH += ../SLDV2/TimbreOS
